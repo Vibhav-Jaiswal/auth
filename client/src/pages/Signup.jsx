@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -24,9 +25,11 @@ const Signup = () => {
       });
       const data = await res.json();
       setLoading(false);
-      if (data.success === false){
+      if (data.success === false) {
         setError(true);
         return;
+      } else {
+        navigate("/sign-in");
       }
     } catch (error) {
       setLoading(false);
@@ -69,7 +72,9 @@ const Signup = () => {
           <span className="text-blue-500 hover:underline">Sign in</span>
         </Link>
       </div>
-      <p className="text-xs text-red-600 mt-4">{error && "Someting went wrong"}</p>
+      <p className="text-xs text-red-600 mt-4">
+        {error && "Someting went wrong"}
+      </p>
     </div>
   );
 };
