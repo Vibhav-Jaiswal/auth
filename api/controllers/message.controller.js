@@ -30,7 +30,6 @@ export const sendMessage = async (req, resp, next) => {
 
     //Socket.io functionality go here
 
-    
     // await conversation.save();
     // await newMessage.save();
 
@@ -38,6 +37,23 @@ export const sendMessage = async (req, resp, next) => {
     await Promise.all([conversation.save(), newMessage.save()]);
 
     resp.status(201).json(newMessage);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMessages = async (req, resp, next) => {
+  try {
+    const { id: userToChatId } = req.params;
+    const senderId = req.user.id;
+
+    const conversation = await Conversation.findOne({
+      participants: { $all: [senderId, userToChatId] },
+    }).populate("messages"); //not references but actual messages
+
+    if(!conversation) return resp.status(200).json([]);
+
+    resp.status(200).json(conversation.messages);
   } catch (error) {
     next(error);
   }
